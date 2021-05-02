@@ -186,8 +186,9 @@ class Server(object):
                     if message == 'pull':
                         pulled = make_card()
                     elif message == 'place':
-                        if
-
+#                        if
+                        word = message.split()
+                        deck_card =
 
 
                     print('Message recived - ' + message)
