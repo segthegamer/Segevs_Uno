@@ -127,6 +127,21 @@ def make_deck():
         counter += 1
     return temp_deck
 
+def valid_placement(deck_card, word):
+    new_card_color = word[1]
+    new_card_type = word[2]
+
+    deck_card_color = deck_card[0]
+    deck_card_type = deck_card[1]
+
+    if new_card_color == 'black':
+        return True
+    elif new_card_color == deck_card_color:
+        return True
+    elif new_card_type == deck_card_type:
+        return True
+    else:
+        return False
 
 class Server(object):
 
@@ -180,7 +195,7 @@ class Server(object):
         while True:
             if self.count == 2:
                 client_socket.sendall('Game is starting'.encode())
-                deck_card =  make_card()
+                deck_card = make_card()
                 while True:
                     message = client_socket.recv(1024).decode()
                     if message == 'pull':
@@ -188,7 +203,9 @@ class Server(object):
                     elif message == 'place':
 #                        if
                         word = message.split()
-                        deck_card =
+                        deck_card_color = word[1]
+                        deck_card_type = word[2]
+                        deck_card = (deck_card_color + ' ' + deck_card_type)
 
 
                     print('Message recived - ' + message)
