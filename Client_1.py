@@ -45,6 +45,9 @@ class Client(object):
                         " Place + the card you wish to place)")
                     if action.lower() == 'pull' or action.lower() == 'place':
                         break
+            if action.lower() == 'place':
+                sent_card = input("Enter the card you")
+
             serverSocket.send(action.encode())
             Running_Message = serverSocket.recv(1024).decode()
             if Running_Message == 'Game has ended':
