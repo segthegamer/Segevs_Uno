@@ -35,7 +35,9 @@ class Client(object):
             action = input(
                 "Select action: Pull, Place (Pull - Pulls new card from bank,"
                 " Place + the card you wish to place)")
-            if action.lower() == 'pull' or action.lower() == 'place':
+            action.lower()
+            split_action = action.split()
+            if split_action[0] == 'pull' or split_action[0] == 'place':
                 serverSocket.send(action.encode())
             else:
                 while action.lower() != 'pull' or action.lower() != 'place':
@@ -43,8 +45,13 @@ class Client(object):
                     action = input(
                         "Select action: Pull, Place (Pull - Pulls new card from bank,"
                         " Place + the card you wish to place)")
-                    if action.lower() == 'pull' or action.lower() == 'place':
+                    action.lower()
+                    split_action = action.split()
+                    if split_action[0] == 'pull' or split_action[0] == 'place':
                         break
+#            if split_action[0] == 'place':
+#                sent_card = input("Enter the card you")
+
             serverSocket.send(action.encode())
             Running_Message = serverSocket.recv(1024).decode()
             if Running_Message == 'Game has ended':
