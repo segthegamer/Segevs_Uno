@@ -3,7 +3,7 @@ import threading
 import random
 import itertools
 
-import Game
+#   import Game
 
 # Card Types
 Card_Colors = ["red", "yellow", "green", "blue", "black"]
@@ -198,11 +198,11 @@ class Server(object):
                 deck_card = make_card()
                 while True:
                     message = client_socket.recv(1024).decode()
-                    if message == 'pull':
+                    word = message.split()
+                    if word[0] == 'pull':
                         pulled = make_card()
-                    elif message == 'place':
+                    elif word[0] == 'place':
 #                        if
-                        word = message.split()
                         deck_card_color = word[1]
                         deck_card_type = word[2]
                         deck_card = (deck_card_color + ' ' + deck_card_type)
