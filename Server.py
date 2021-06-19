@@ -2,7 +2,6 @@ import socket
 import threading
 import random
 import itertools
-import pygame
 
 #   import Game
 
@@ -199,14 +198,14 @@ class Server(object):
                 deck_card = make_card()
                 while True:
                     message = client_socket.recv(1024).decode()
-#                    word = message.split()
-#                    if word[0] == 'pull':
-#                        pulled = make_card()
-#                    elif word[0] == 'place':
+                    word = message.split()
+                    if word[0] == 'pull':
+                        pulled = make_card()
+                    elif word[0] == 'place':
 #                        if
-#                        deck_card_color = word[1]
-#                        deck_card_type = word[2]
-#                        deck_card = (deck_card_color + ' ' + deck_card_type)
+                        deck_card_color = word[1]
+                        deck_card_type = word[2]
+                        deck_card = (deck_card_color + ' ' + deck_card_type)
 
 
                     print('Message recived - ' + message)
