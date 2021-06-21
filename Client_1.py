@@ -30,7 +30,7 @@ def RedrawWindow():
 #    screen.blit(backround, (0, 0))
     screen.fill(White)
     pygame.display.update()
-
+''''''
 def DrawCard(type, color):
 #make valid type and color check
     make_image = color + "_" + type + ".png"

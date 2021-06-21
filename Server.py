@@ -4,7 +4,8 @@ import random
 import itertools
 import pygame
 
-#   import Game
+import Cards
+import Game
 
 # Card Types
 Card_Colors = ["red", "yellow", "green", "blue", "black"]
