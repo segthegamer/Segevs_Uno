@@ -28,11 +28,16 @@ class Deck:
         self.deck.append(card)
         self.Deck_update()
 
+    # Remove a card from a player's deck
+
     def Remove_card_from_deck(self, index):
-        # get the last card from deck
+        try:
+            temp_card = Deck[index]
+        except:
+            print("Error removing card")
         self.deck.pop(index)
         self.Deck_update()
-        return card
+        return temp_card
 
     def Combine_deck(self, cards):
         # combines two packets
@@ -56,9 +61,8 @@ class Deck:
 
 
 class Deck_Maker:
-
     Card_Colors = ["red", "yellow", "green", "blue"]
-#    amounts = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    #    amounts = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     Normal_Cards_Type = list(range(0, 10)) + list(range(1, 10))
 
     def __init__(self):
@@ -68,20 +72,21 @@ class Deck_Maker:
             for Type in self.Normal_Cards_Type:
                 card = Card(Type, Color)
                 self.cards_lst.append(card)
-        self.cards_lst = self.cards_lst * 2
+
+    #        self.cards_lst = self.cards_lst * 2
 
     def random_card(self):
         rand_type = random.randint(0, 10)
         rand_color = random.choice(self.Card_Colors)
         return Card(rand_type, rand_color)
 
-# what do i change
+    # what do i change
     def make_deck(self):
-        index = random.sample(range(0, 40), 40)
+        index = random.sample(range(0, 70), 70)
         Deck_1 = []
         Deck_2 = []
 
-        for i in range(0, 40):
+        for i in range(0, 14):
             if i % 2 == 0:
                 Deck_1.append(self.cards_lst[index[i]])
             else:
@@ -89,4 +94,3 @@ class Deck_Maker:
         Client_1_Deck = Deck(Deck_1)
         Client_2_Deck = Deck(Deck_2)
         return Client_1_Deck, Client_2_Deck
-

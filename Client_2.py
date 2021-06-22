@@ -1,5 +1,51 @@
 import socket
-import Game
+# import Game
+import pygame
+import Cards
+
+# Graphics
+pygame.init()
+
+# Title and icon
+pygame.display.set_caption("Segev's Uno - Player 2")
+# icon = pygame.image.load('icon.png')
+# pygame.display.set_icon(icon)
+
+# Game window
+Screen_Width = 1200
+Screen_Height = 600
+screen = pygame.display.set_mode((Screen_Width, Screen_Height))
+
+# Constants
+Black = (0, 0, 0)
+White = (255, 255, 255)
+Blue = (0, 0, 128)
+Red = (256, 0, 0)
+LeftMouse = 1
+MiddleMouse = 2
+RightMouse = 3
+
+
+# Background image
+def RedrawWindow():
+    #    backround = pygame.image.load('background.png')
+    #    screen.blit(backround, (0, 0))
+    screen.fill(White)
+    pygame.display.update()
+
+
+def DrawCard(type, color):
+    # make valid type and color check
+    make_image = color + "_" + type + ".png"
+    card_image = pygame.image.load(make_image)
+    card_image.convert()
+
+    rect = card_image.get_rect()
+    rect.center = Screen_Width // 2, Screen_Height // 2
+
+    screen.blit(card_image, rect)
+    pygame.display.update()
+
 
 class Client(object):
 
@@ -28,6 +74,10 @@ class Client(object):
         Message = serverSocket.recv(1024).decode()
         print(Message)
         while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+            RedrawWindow()
             print("Your cards: ")
             print("Your card total: ")
             print("Opponent card total: ")
@@ -49,8 +99,8 @@ class Client(object):
                     split_action = action.split()
                     if split_action[0] == 'pull' or split_action[0] == 'place':
                         break
-#            if split_action[0] == 'place':
-#                sent_card = input("Enter the card you")
+            #            if split_action[0] == 'place':
+            #                sent_card = input("Enter the card you")
 
             serverSocket.send(action.encode())
             Running_Message = serverSocket.recv(1024).decode()

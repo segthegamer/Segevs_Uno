@@ -1,14 +1,15 @@
 import socket
-import Game
+# import Game
 import pygame
+import Cards
 
 # Graphics
 pygame.init()
 
 # Title and icon
 pygame.display.set_caption("Segev's Uno - Player 1")
-#icon = pygame.image.load('icon.png')
-#pygame.display.set_icon(icon)
+# icon = pygame.image.load('icon.png')
+# pygame.display.set_icon(icon)
 
 # Game window
 Screen_Width = 1200
@@ -24,15 +25,25 @@ LeftMouse = 1
 MiddleMouse = 2
 RightMouse = 3
 
+
 # Background image
 def RedrawWindow():
-#    backround = pygame.image.load('background.png')
-#    screen.blit(backround, (0, 0))
+    #    backround = pygame.image.load('background.png')
+    #    screen.blit(backround, (0, 0))
     screen.fill(White)
+    DrawBlank()
     pygame.display.update()
-''''''
+
+def DrawBlank():
+    card_image = pygame.image.load('back.png')
+    card_image.convert()
+    rect = card_image.get_rect()
+    rect.center = Screen_Width // 2, Screen_Height // 2
+    screen.blit(card_image, rect)
+    pygame.display.update()
+
 def DrawCard(type, color):
-#make valid type and color check
+    # make valid type and color check
     make_image = color + "_" + type + ".png"
     card_image = pygame.image.load(make_image)
     card_image.convert()
@@ -42,6 +53,7 @@ def DrawCard(type, color):
 
     screen.blit(card_image, rect)
     pygame.display.update()
+
 
 class Client(object):
 
@@ -95,8 +107,8 @@ class Client(object):
                     split_action = action.split()
                     if split_action[0] == 'pull' or split_action[0] == 'place':
                         break
-#            if split_action[0] == 'place':
-#                sent_card = input("Enter the card you")
+            #            if split_action[0] == 'place':
+            #                sent_card = input("Enter the card you")
 
             serverSocket.send(action.encode())
             Running_Message = serverSocket.recv(1024).decode()
