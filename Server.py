@@ -142,19 +142,17 @@ class Server(object):
                 print('waiting for a new client')
 
                 clientSocket, client_address = sock.accept()  # block
-                self.dictSocketId[self.sumClient] = clientSocket
-                self.dictThreadsId[self.sumClient] = threading.Thread(target=self.handle_client_connection,
+                self.dictSocketId[self.count] = clientSocket
+                self.dictThreadsId[self.count] = threading.Thread(target=self.handle_client_connection,
                                                                       args=(self.count, clientSocket , self.q))
-                self.dictThreadsId[self.sumClient].start()
+                
 
                 self.count += 1
-
+                print(self.dictThreadsId)
                 if (self.count == 2):
-
+                    for i in range(0 , self.count):
+                        self.dictThreadsId[i].start()
                     break
-                    #for i in range(0 , self.count):
-                     #       self.dictThreadsId[self.sumClient].start()
-
 
             while True:
                 print(self.q.get())
@@ -224,6 +222,6 @@ class Server(object):
 
 if __name__ == '__main__':
     ip = '127.0.0.1'
-    port = 1731
+    port = 1735
     s = Server(ip, port)
     s.start()

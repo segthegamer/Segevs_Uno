@@ -24,8 +24,8 @@ class Client(object):
 
             while True:
                 self.base_game = self.recv_from_server(sock)
-                player = base_game.Player1
-                ##TODO:CHANGE TO PLAYER2 ON SECOND CLIENT
+                player = self.base_game.Player1
+                self.make_move(player , self.base_game)
                 #TODO: PLAY THE GAME
                 self.base_game.current += 1
                 ######TODO: CHAGNGE TO self.base_game.current -= 1 WHEN IN SECOND PLAYER 
@@ -41,18 +41,20 @@ class Client(object):
         x = int.from_bytes(size, byteorder='little')            
         data = clientSocket.recv(int(size))
         x = pickle.loads(data)
-        return x 
-
-    def send_game_to_server(self, game , clientSocket):
-        
-        data = pickle.dumps(game, 0)
-        size = str(len(data)).ljust(16).encode('utf-8')
-        self.ClientSocket.send(size)
-        self.ClientSocket.send(data)
+        print(x)
+        return x game = t(16).encode('utf-8')
+        clientSocket.send(size)
+        clientSocket.send(data)
+    
+    def make_move(self , player , game):
+        print(game.card_on_table)
+        print(game.Player1.card_packet)
+        inp = int(input("enter withdraw index"))
+        self.base_game.take_out_card(player , inp)
 
 
 if __name__ == '__main__':
     ip = '127.0.0.1'
-    port = 1731
+    port = 1735
     c = Client(ip, port)
     c.start()

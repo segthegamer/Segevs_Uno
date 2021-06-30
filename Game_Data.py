@@ -21,6 +21,16 @@ class Game:
 
         self.listUsers = [self.Player1, self.Player2]
 
+    def __str__(self) -> str:
+
+        print(self.Player1.card_packet)
+        print("############################################################################################")
+        print(self.Player2.card_packet)
+        print("############################################################################################")
+        print(self.card_on_table)
+        return "hey"
+
+
     def withdraw(self, player):
 
         if self.Player1.are_equals(player):
@@ -28,6 +38,8 @@ class Game:
 
         if self.Player2.are_equals(player):
             self.Player2.card_packet.Add_card_to_deck(self.card_dis.random_card())
+    
+
 
     def take_out_card(self , player , index):
         

@@ -44,16 +44,17 @@ class Client(object):
         x = pickle.loads(data)
         return x 
 
+
     def send_game_to_server(self, game , clientSocket):
         
         data = pickle.dumps(game, 0)
         size = str(len(data)).ljust(16).encode('utf-8')
-        self.ClientSocket.send(size)
-        self.ClientSocket.send(data)
+        clientSocket.send(size)
+        clientSocket.send(data)
 
 
 if __name__ == '__main__':
     ip = '127.0.0.1'
-    port = 1731
+    port = 1735
     c = Client(ip, port)
     c.start()
