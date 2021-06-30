@@ -133,6 +133,10 @@ class Server(object):
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.bind((self.ip, self.port))
             sock.listen(2)
+            gameOBJ = Game()
+            print(dir(gameOBJ))
+            self.q.put(gameOBJ)
+            self.q.put(gameOBJ)
 
             while True:
                 print('waiting for a new client')
@@ -140,11 +144,17 @@ class Server(object):
                 clientSocket, client_address = sock.accept()  # block
                 self.dictSocketId[self.sumClient] = clientSocket
                 self.dictThreadsId[self.sumClient] = threading.Thread(target=self.handle_client_connection,
-                                                                      args=(self.count, clientSocket, self.count))
+                                                                      args=(self.count, clientSocket , self.q))
                 self.dictThreadsId[self.sumClient].start()
+
                 self.count += 1
+
                 if (self.count == 2):
+
                     break
+                    #for i in range(0 , self.count):
+                     #       self.dictThreadsId[self.sumClient].start()
+
 
             while True:
                 print(self.q.get())
@@ -160,10 +170,7 @@ class Server(object):
             self.dictSocketId[clientId].send(size)
             self.dictSocketId[clientId].send(data)
 
-    def handleClient(self, clientSock, current):
-        print("hello")
-        client_handler = threading.Thread(target=self.handle_client_connection, args=(clientSock, current, current))
-        client_handler.start()
+
 
     def table(self, num):
         st = ""
@@ -185,37 +192,38 @@ class Server(object):
     #        frame=pickle.loads(frame_data, fix_imports=True, encoding="bytes")
     #        return frame
 
-    def handle_client_connection(self, client_socket, current, id):
+    def send_game_to_player(self, game , clientSocket):
+        
+        data = pickle.dumps(game, 0)
+        size = str(len(data)).ljust(16).encode('utf-8')
+        clientSocket.send(size)
+        clientSocket.send(data)
+
+    def recv_game_from_player(self , clientSocket): 
+
+        size = clientSocket.recv(int(16))
+        data = clientSocket.recv(size)
+        x = pickle.loads(data)
+        return x 
+
+    def handle_client_connection(self, count, clientSocket , q):
         print("start")
+        baseGame = q.get()
+        print(dir(baseGame))
         while True:
-            #            if self.count == 2:
-            #                client_socket.sendall('Game is starting'.encode())
-            #                deck_card = make_card()
-            while True:
-                size = client_socket.recv(16)
-                data = client_socket.recv(size)
-                x = pickle.loads(data)
-                self.q.put((x, id))
-                data = pickle.loads(Game, 0)
-                size = str(len(data)).ljust(16).encode('utf-8')
+            print(f"thread {count} current player {baseGame.current} ")
 
+            if(baseGame.current == count):
+                baseGame = self.recv_game_from_player()
+                self.q.put(baseGame) 
 
-#                    message = client_socket.recv(1024).decode()
-#                    word = message.split()
-#                    if word[0] == 'pull':
-#                        pulled = make_card()
-#                    elif word[0] == 'place':
-#                        if
-#                        deck_card_color = word[1]
-#                        deck_card_type = word[2]
-#                        deck_card = (deck_card_color + ' ' + deck_card_type)
-
-#                    print('Message recived - ' + message)
-#                    client_socket.sendall(('Message recived - ' + message).encode())
+            elif (baseGame.current != count and not self.q.empty()):
+                baseGame = q.get()
+                self.send_game_to_player(baseGame , clientSocket )
 
 
 if __name__ == '__main__':
-    ip = '0.0.0.0'
+    ip = '127.0.0.1'
     port = 1731
     s = Server(ip, port)
     s.start()

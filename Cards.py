@@ -1,5 +1,7 @@
 import random
 
+from pygame import Color
+
 
 class Card:
     def __init__(self, color, type):
@@ -9,10 +11,13 @@ class Card:
     def __str__(self):
         # print for card class
         return f"{self.color} , {self.type}"
+    
+    def __repr__(self) -> str:
+        return (f"{self.color} , {self.type} ###")
 
     def is_equal(self, card):
         # checks to card for button eval
-        if self.type == card.amount or self.color == card.color:
+        if self.type == card.type or self.color == card.color:
             return True
         return False
 
@@ -29,12 +34,15 @@ class Deck:
         self.Deck_update()
 
     # Remove a card from a player's deck
+    def __str__(self):
+        return(f"len : {self.length} , cards {self.deck}")
 
     def Remove_card_from_deck(self, index):
         try:
-            temp_card = Deck[index]
-        except:
-            print("Error removing card")
+            temp_card = self.deck[index]
+        except Exception as e:
+            print(index)
+            print("Error removing card"  , e)
         self.deck.pop(index)
         self.Deck_update()
         return temp_card
