@@ -12,10 +12,6 @@ import threading
 
 class Game:
     def __init__(self):
-
-#        Temp_deck = Deck_Maker()
-#        packet_tup = Temp_deck.make_deck()
-
         self.card_dis = Deck_Maker()
         packet_tup = self.card_dis.make_deck()
         self.Player1 = Player(packet_tup[0], "1")

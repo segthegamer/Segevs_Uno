@@ -45,19 +45,8 @@ class Deck:
             self.Add_card_to_deck(card)
 
     def Deck_update(self):
-        # updates the length property (for win conditions)
+        # Updates the size of the deck (for win conditions)
         self.length = len(self.deck)
-
-
-'''
-    def check_for_button(self, card):
-        # checks button, used only when packet is open
-        index = 3  # TODO:change .
-        for i in self.card_packet:
-            if (i == index):
-                if (self.card_packet[i].is_equal(card)):
-                    self.withdraw_card(index)
-'''
 
 
 class Deck_Maker:

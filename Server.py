@@ -5,8 +5,8 @@ import itertools
 import pygame
 from queue import Queue
 import Cards
-import Game_Data
-
+from Game_Data import Game
+import pickle
 
 # Card Types
 Card_Colors = ["red", "yellow", "green", "blue", "black"]
@@ -35,46 +35,12 @@ class Card:
     def __repr__(self):
         return '{} {}'.format(self.color, self.type)
 
-    # not important
-
-    #    def __str__(self):
-    #       return '{}{}'.format(self.color_short, self.card_type_short)
-
-    #    def __eq__(self, other):
-    #       return self.color == other.color and self.type == other.card_type
-
-    # not important
-
     def valid_card(self, color, type):
         if color not in Card_Colors:
             raise ValueError("Invalid Color")
 
-    #        if color != 'black' and type not in Normal_Cards_Type and type not in Special_Cards_Type:
-    #            raise ValueError('Invalid card type')
-    #        if color == 'black' and type not in Black_Cards_Type:
-    #            raise ValueError('Invalid card type')
-
-    # not important
-
-    #    @property
-    #    def color_short(self):
-    #        return self.color[0].upper()
-
-    #    @property
-    #    def card_type_short(self):
-    #        if self.type in ('skip', 'reverse', 'wildcard'):
-    #            return self.type[0].upper()
-    #        else:
-    #            return self.type
-
-    # not important
-
-    # maybe important
-
     def get_color(self):
         return self.temp_color if self.temp_color else self.color
-
-    # maybe important
 
     def get_temp_color(self):
         return self.temp_color
@@ -174,22 +140,29 @@ class Server(object):
                 clientSocket, client_address = sock.accept()  # block
                 self.dictSocketId[self.sumClient] = clientSocket
                 self.dictThreadsId[self.sumClient] = threading.Thread(target=self.handle_client_connection,
-                                                                      args=(self.count, client_socket))
+                                                                      args=(self.count, clientSocket, self.count))
                 self.dictThreadsId[self.sumClient].start()
                 self.count += 1
                 if (self.count == 2):
                     break
 
+            while True:
+                print(self.q.get())
+
+
         except socket.error as e:
             print(e)
 
     def sendAllClient(self, data):  # שולח מידע לכל הלקוחות בלולאה
+        #        data = pickle.dumps(Game, 0)
+        size = str(len(data)).ljust(16).encode('utf-8')
         for clientId in self.dictThreadsId:
-            self.dictSocketId[clientId].send(data.encode())
+            self.dictSocketId[clientId].send(size)
+            self.dictSocketId[clientId].send(data)
 
     def handleClient(self, clientSock, current):
         print("hello")
-        client_handler = threading.Thread(target=self.handle_client_connection, args=(clientSock, current,))
+        client_handler = threading.Thread(target=self.handle_client_connection, args=(clientSock, current, current))
         client_handler.start()
 
     def table(self, num):
@@ -200,25 +173,45 @@ class Server(object):
             st += "\n"
         return st
 
-    def handle_client_connection(self, client_socket, current, q, id):
+    #    def send_image(self , data_tup):
+    #        header = data_tup[0]
+    #        print(header)
+    #        data = data_tup[1]
+    #        self.ClientSocket.send(header)
+    #        self.ClientSocket.send(data)
+
+    #   def from_bytes(frame_data):
+
+    #        frame=pickle.loads(frame_data, fix_imports=True, encoding="bytes")
+    #        return frame
+
+    def handle_client_connection(self, client_socket, current, id):
         print("start")
         while True:
-            if self.count == 2:
-                client_socket.sendall('Game is starting'.encode())
-                deck_card = make_card()
-                while True:
-                    message = client_socket.recv(1024).decode()
-                    #                    word = message.split()
-                    #                    if word[0] == 'pull':
-                    #                        pulled = make_card()
-                    #                    elif word[0] == 'place':
-                    #                        if
-                    #                        deck_card_color = word[1]
-                    #                        deck_card_type = word[2]
-                    #                        deck_card = (deck_card_color + ' ' + deck_card_type)
+            #            if self.count == 2:
+            #                client_socket.sendall('Game is starting'.encode())
+            #                deck_card = make_card()
+            while True:
+                size = client_socket.recv(16)
+                data = client_socket.recv(size)
+                x = pickle.loads(data)
+                self.q.put((x, id))
+                data = pickle.loads(Game, 0)
+                size = str(len(data)).ljust(16).encode('utf-8')
 
-                    print('Message recived - ' + message)
-                    client_socket.sendall(('Message recived - ' + message).encode())
+
+#                    message = client_socket.recv(1024).decode()
+#                    word = message.split()
+#                    if word[0] == 'pull':
+#                        pulled = make_card()
+#                    elif word[0] == 'place':
+#                        if
+#                        deck_card_color = word[1]
+#                        deck_card_type = word[2]
+#                        deck_card = (deck_card_color + ' ' + deck_card_type)
+
+#                    print('Message recived - ' + message)
+#                    client_socket.sendall(('Message recived - ' + message).encode())
 
 
 if __name__ == '__main__':
