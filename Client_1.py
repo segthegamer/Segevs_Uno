@@ -24,12 +24,14 @@ class Client(object):
 
             while True:
                 self.base_game = self.recv_from_server(sock)
-                player = self.base_game.Player1
-                self.make_move(player , self.base_game)
-                #TODO: PLAY THE GAME
-                self.base_game.current += 1
-                ######TODO: CHAGNGE TO self.base_game.current -= 1 WHEN IN SECOND PLAYER 
-                self.send_game_to_server(self.base_game , sock)
+                print(self.base_game.current)
+
+                if(self.base_game.current == 1):
+                    player = self.base_game.Player1
+                    self.make_move(player , self.base_game)
+                    self.base_game.current += 1
+                    self.send_game_to_server(self.base_game , sock)
+                print("stuck")
 
         except socket.error as e:
             print(e)
@@ -42,9 +44,16 @@ class Client(object):
         data = clientSocket.recv(int(size))
         x = pickle.loads(data)
         print(x)
-        return x game = t(16).encode('utf-8')
+        return x 
+    
+    def send_game_to_server(self, game , clientSocket):
+        
+        data = pickle.dumps(game, 0)
+        size = str(len(data)).ljust(16).encode('utf-8')
         clientSocket.send(size)
         clientSocket.send(data)
+        print("sent to server 11111")
+
     
     def make_move(self , player , game):
         print(game.card_on_table)
@@ -52,9 +61,8 @@ class Client(object):
         inp = int(input("enter withdraw index"))
         self.base_game.take_out_card(player , inp)
 
-
 if __name__ == '__main__':
     ip = '127.0.0.1'
-    port = 1735
+    port = 1760
     c = Client(ip, port)
     c.start()

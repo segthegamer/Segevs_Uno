@@ -24,14 +24,16 @@ class Client(object):
 
             while True:
                 self.base_game = self.recv_from_server(sock)
-                player = self.base_game.Player2
                 print(self.base_game.current)
-                print(self.base_game.Player2.card_packet)
-                ##TODO:CHANGE TO PLAYER2 ON SECOND CLIENT
-                #TODO: PLAY THE GAME
-                self.base_game.current -= 1
-                ######TODO: CHAGNGE TO self.base_game.current -= 1 WHEN IN SECOND PLAYER 
-                self.send_game_to_server(self.base_game , sock)
+
+                if(self.base_game.current == 2):
+                    player = self.base_game.Player2
+                    self.make_move(player , self.base_game)
+                    self.base_game.current -= 1
+                    print(self.base_game.current)
+                    self.send_game_to_server(self.base_game , sock)
+                
+                print("heyyyy")
 
         except socket.error as e:
             print(e)
@@ -51,10 +53,17 @@ class Client(object):
         size = str(len(data)).ljust(16).encode('utf-8')
         clientSocket.send(size)
         clientSocket.send(data)
+            
+    def make_move(self , player , game):
+        print(game.card_on_table)
+        print(game.Player1.card_packet)
+        inp = int(input("enter withdraw index"))
+        self.base_game.take_out_card(player , inp)
+
 
 
 if __name__ == '__main__':
     ip = '127.0.0.1'
-    port = 1735
+    port = 1760
     c = Client(ip, port)
     c.start()

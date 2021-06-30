@@ -122,7 +122,7 @@ class Server(object):
         self.port = port
         self.dictSocketId = {}
         self.dictThreadsId = {}
-        self.count = 0
+        self.count = 1
         self.sumClient = 0
         self.q = Queue()
 
@@ -134,7 +134,6 @@ class Server(object):
             sock.bind((self.ip, self.port))
             sock.listen(2)
             gameOBJ = Game()
-            print(dir(gameOBJ))
             self.q.put(gameOBJ)
             self.q.put(gameOBJ)
 
@@ -146,12 +145,12 @@ class Server(object):
                 self.dictThreadsId[self.count] = threading.Thread(target=self.handle_client_connection,
                                                                       args=(self.count, clientSocket , self.q))
                 
-
+                print(len(self.dictThreadsId) , "dict length")
                 self.count += 1
-                print(self.dictThreadsId)
-                if (self.count == 2):
-                    for i in range(0 , self.count):
-                        self.dictThreadsId[i].start()
+                if (self.count == 3):
+                    for value in self.dictThreadsId.values():
+                        value.start()
+                        print("#4opjgfa[jigji24g2t4jippji4t")
                     break
 
             while True:
@@ -163,6 +162,8 @@ class Server(object):
 
     def sendAllClient(self, data):  # שולח מידע לכל הלקוחות בלולאה
         #        data = pickle.dumps(Game, 0)
+        data = pickle.dumps(data, 0)
+
         size = str(len(data)).ljust(16).encode('utf-8')
         for clientId in self.dictThreadsId:
             self.dictSocketId[clientId].send(size)
@@ -197,31 +198,40 @@ class Server(object):
         clientSocket.send(size)
         clientSocket.send(data)
 
-    def recv_game_from_player(self , clientSocket): 
+    def recv_from_player(self , clientSocket):
 
-        size = clientSocket.recv(int(16))
-        data = clientSocket.recv(size)
+        size = clientSocket.recv(16)
+        print("#################################################################################" , size)
+        x = int.from_bytes(size, byteorder='little')            
+        data = clientSocket.recv(int(size))
         x = pickle.loads(data)
+        print(x)
         return x 
 
     def handle_client_connection(self, count, clientSocket , q):
         print("start")
         baseGame = q.get()
-        print(dir(baseGame))
+        self.send_game_to_player(baseGame , clientSocket )
         while True:
-            print(f"thread {count} current player {baseGame.current} ")
 
             if(baseGame.current == count):
-                baseGame = self.recv_game_from_player()
+                baseGame = self.recv_from_player(clientSocket)
+                print("recived game")
                 self.q.put(baseGame) 
 
             elif (baseGame.current != count and not self.q.empty()):
-                baseGame = q.get()
-                self.send_game_to_player(baseGame , clientSocket )
+                print("entered the second one")
+                while True:
+                    if(not q.empty()):
+                        baseGame = q.get()
+                        break
+                print("bad bad bad")
+                print(baseGame.current)
+                self.send_game_to_player(baseGame , self.dictSocketId[baseGame.current])
 
 
 if __name__ == '__main__':
     ip = '127.0.0.1'
-    port = 1735
+    port = 1760
     s = Server(ip, port)
     s.start()
